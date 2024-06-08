@@ -1,0 +1,58 @@
+CXX_20 = g++ -std=gnu++17
+NVCC = /usr/local/cuda/bin/nvcc
+
+## R relted paths
+R_HOME = /usr/local/lib64/R
+R_INC = -I$(R_HOME)/include
+R_LIB = -L$(R_HOME)/libs
+R_FLAGS = $(R_INC) $(R_LIB)
+R_PKGS = /home/rmpuser/R/4.3.3/almalinux9.4
+
+RCPP_HOME = $(R_HOME)/library/Rcpp
+RCPP_INC = -I$(RCPP_HOME)/include
+RCPP_PARA = -L$(RCPP_HOME)/libs
+RCPP_FLAGS=$(RCPP_PARA) $(RCPP_INC)
+
+RCPP_PAR_HOME = $(R_HOME)/library/RcppParallel
+RCPP_PAR_LIB = -L$(RCPP_PAR_HOME)/lib
+RCPP_PAR_INC = -I$(RCPP_PAR_HOME)/include
+RCPP_PAR_FLAGS=$(RCPP_PAR_LIB) $(RCPP_PAR_INC)
+
+# used compile oneAPI library
+ONEAPI_HOME=/opt/intel/oneapi/tbb/latest
+ONEAPI_LIB=-L$(ONEAPI_HOME)/lib -ltbb -pthread 
+ONEAPI_INC=-I$(ONEAPI_HOME)/include
+ONEAPI_FLAGS=$(ONEAPI_LIB) $(ONEAPI_INC)
+
+# used compile cuda library
+CUDA_HOME=/usr/local/cuda
+CUDA_LIB=-L$(CUDA_HOME)/lib64 -lcudart
+CUDA_INC=-I$(CUDA_HOME)/include $(R_INC) $(R_LIB) -I.
+#all #all-major
+CUDA_ARCH=-O3 -arch=compute_50 -G -lR --shared -Xcompiler -fPIC 
+CUDA_FLAGS=$(CUDA_LIB) $(CUDA_INC)
+
+# general compilation composed flags
+CXX_FLAGS=$(CUDA_FLAGS) $(ONEAPI_FLAGS)
+LINKING_FLAGS=-Wl,-R$(ONEAPI_HOME)/lib
+
+## Library source and object files
+cpp_sources = $(wildcard *.cpp)
+cpp_objs := $(patsubst %.cpp, %.o, $(cpp_sources))
+cu_sources = $(wildcard *.cu)
+cu_objs := $(patsubst %.cu, %.o, $(cu_sources))
+
+PKG_LIBS = $(R_FLAGS) $(ONEAPI_FLAGS) $(CUDA_FLAGS) $(LINKING_FLAGS) $(RCPP_FLAGS) $(RCPP_PAR_FLAGS)
+OBJECTS = $(cu_objs) $(cpp_objs)
+
+all: clean $(SHLIB)
+$(SHLIB): $(OBJECTS)
+
+clean:
+	rm -f *.o $(SHLIB)
+
+%.o: %.cpp $(cpp_sources)
+	$(CXX) $< -c -fPIC $(R_INC) $(RCPP_INC) $(RCPP_PAR_INC) $(ONEAPI_FLAGS) -I.
+
+%.o: %.cu $(cu_sources)
+	$(NVCC) $(CUDA_FLAGS) $(CUDA_ARCH) $< -c -I. 
