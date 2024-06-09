@@ -1,3 +1,6 @@
-inst/build/*
+inst/*
 ^.*\.Rproj$
 ^\.Rproj\.user$
+src/*.so
+src/*.o
+src/*.cu

@@ -59,4 +59,4 @@ clean:
 	$(CXX) $< -c -fPIC $(R_INC) $(RCPP_INC) $(RCPP_PAR_INC) $(ONEAPI_FLAGS) -I.
 
 %.o: %.cu $(cu_sources)
-	$(NVCC) $(CUDA_FLAGS) $(CUDA_ARCH) $< -c -I. 
+	$(NVCC) $(CUDA_FLAGS) $(CUDA_ARCH) $(RCPP_INC) $< -c -I. 

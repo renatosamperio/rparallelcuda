@@ -1,12 +1,13 @@
 #include <cuda_runtime.h>
 #include <iostream>
+#include <Rcpp.h>
 
 #define CUDA_CHECK(call) \
     do { \
         cudaError_t err = call; \
         if (err != cudaSuccess) { \
-            std::cerr << "CUDA error in " << __FILE__ << " at line " << __LINE__ << ": " << cudaGetErrorString(err) << std::endl; \
-            exit(EXIT_FAILURE); \
+            Rcpp::Rcout << "CUDA error in " << __FILE__ << " at line " << __LINE__ << ": " << cudaGetErrorString(err) << std::endl; \
+            Rcpp::stop("Exiting..."); \
         } \
     } while (0)
 

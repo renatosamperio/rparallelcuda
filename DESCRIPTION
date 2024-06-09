@@ -1,15 +1,20 @@
 Package: rparallelcuda
-Title: R Parallel Cuda 
+Title: R Parallel Cuda
 Version: 0.0.1
 Authors@R: 
     person("Renato", "Samperio", , "renato.samperio@zurich.com", role = c("aut", "cre"))
 Description: PoC of parallelism handling oneAPI and CUDA.
-License: file LICENSE
+License: GPL (>=3)
+Imports: 
+    microbenchmark,
+    Rcpp,
+    RcppParallel,
+    stats
+LinkingTo: 
+    Rcpp,
+    RcppParallel
 Encoding: UTF-8
 Language: en
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.1
-LinkingTo: 
-    Rcpp
-Imports: 
-    Rcpp
+SystemRequirements: GNU make

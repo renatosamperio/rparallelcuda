@@ -10,7 +10,6 @@ sumMatrixesTbbParallel <- \(A = NULL,
                         size = 496, 
                         debug = FALSE) {
 
-    format(object.size(library), units = "auto")
     if (is.null(A)) {
         A <- initMatrix(size, debug = debug)
     }
