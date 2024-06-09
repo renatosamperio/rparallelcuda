@@ -37,7 +37,7 @@ Rcpp::NumericMatrix sum_matrixes_tbb_parallel(
         A.nrow() != C.nrow() || 
         A.ncol() != B.ncol() || 
         A.ncol() != C.ncol()) {
-            Rcpp::Rcout << "All matrices must have the same dimensions" << std::endl;
+            Rcpp::Rcout << "All matrixes must have the same dimensions" << std::endl;
             return result;
     }
 

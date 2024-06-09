@@ -10,6 +10,22 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// sum_matrixes_cuda
+Rcpp::NumericMatrix sum_matrixes_cuda(Rcpp::NumericMatrix A, Rcpp::NumericMatrix B, Rcpp::NumericMatrix C, int N, int block1, int block2);
+RcppExport SEXP _rparallelcuda_sum_matrixes_cuda(SEXP ASEXP, SEXP BSEXP, SEXP CSEXP, SEXP NSEXP, SEXP block1SEXP, SEXP block2SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type A(ASEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type B(BSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type C(CSEXP);
+    Rcpp::traits::input_parameter< int >::type N(NSEXP);
+    Rcpp::traits::input_parameter< int >::type block1(block1SEXP);
+    Rcpp::traits::input_parameter< int >::type block2(block2SEXP);
+    rcpp_result_gen = Rcpp::wrap(sum_matrixes_cuda(A, B, C, N, block1, block2));
+    return rcpp_result_gen;
+END_RCPP
+}
 // sum_matrixes_rcpp
 Rcpp::NumericMatrix sum_matrixes_rcpp(Rcpp::NumericMatrix A, Rcpp::NumericMatrix B, Rcpp::NumericMatrix C, int N);
 RcppExport SEXP _rparallelcuda_sum_matrixes_rcpp(SEXP ASEXP, SEXP BSEXP, SEXP CSEXP, SEXP NSEXP) {
@@ -21,6 +37,22 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type C(CSEXP);
     Rcpp::traits::input_parameter< int >::type N(NSEXP);
     rcpp_result_gen = Rcpp::wrap(sum_matrixes_rcpp(A, B, C, N));
+    return rcpp_result_gen;
+END_RCPP
+}
+// sum_matrixes_tbb_cuda
+Rcpp::NumericMatrix sum_matrixes_tbb_cuda(Rcpp::NumericMatrix A, Rcpp::NumericMatrix B, Rcpp::NumericMatrix C, int N, int block1, int block2);
+RcppExport SEXP _rparallelcuda_sum_matrixes_tbb_cuda(SEXP ASEXP, SEXP BSEXP, SEXP CSEXP, SEXP NSEXP, SEXP block1SEXP, SEXP block2SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type A(ASEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type B(BSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type C(CSEXP);
+    Rcpp::traits::input_parameter< int >::type N(NSEXP);
+    Rcpp::traits::input_parameter< int >::type block1(block1SEXP);
+    Rcpp::traits::input_parameter< int >::type block2(block2SEXP);
+    rcpp_result_gen = Rcpp::wrap(sum_matrixes_tbb_cuda(A, B, C, N, block1, block2));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -52,27 +84,13 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// sum_matrixes_tbb_reduce
-double sum_matrixes_tbb_reduce(Rcpp::NumericMatrix A, Rcpp::NumericMatrix B, Rcpp::NumericMatrix C, Rcpp::NumericVector result, int N);
-RcppExport SEXP _rparallelcuda_sum_matrixes_tbb_reduce(SEXP ASEXP, SEXP BSEXP, SEXP CSEXP, SEXP resultSEXP, SEXP NSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type A(ASEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type B(BSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type C(CSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type result(resultSEXP);
-    Rcpp::traits::input_parameter< int >::type N(NSEXP);
-    rcpp_result_gen = Rcpp::wrap(sum_matrixes_tbb_reduce(A, B, C, result, N));
-    return rcpp_result_gen;
-END_RCPP
-}
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_rparallelcuda_sum_matrixes_cuda", (DL_FUNC) &_rparallelcuda_sum_matrixes_cuda, 6},
     {"_rparallelcuda_sum_matrixes_rcpp", (DL_FUNC) &_rparallelcuda_sum_matrixes_rcpp, 4},
+    {"_rparallelcuda_sum_matrixes_tbb_cuda", (DL_FUNC) &_rparallelcuda_sum_matrixes_tbb_cuda, 6},
     {"_rparallelcuda_sum_matrixes_tbb_graph", (DL_FUNC) &_rparallelcuda_sum_matrixes_tbb_graph, 4},
     {"_rparallelcuda_sum_matrixes_tbb_parallel", (DL_FUNC) &_rparallelcuda_sum_matrixes_tbb_parallel, 4},
-    {"_rparallelcuda_sum_matrixes_tbb_reduce", (DL_FUNC) &_rparallelcuda_sum_matrixes_tbb_reduce, 5},
     {NULL, NULL, 0}
 };
 

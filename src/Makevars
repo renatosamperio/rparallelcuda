@@ -29,7 +29,7 @@ CUDA_HOME=/usr/local/cuda
 CUDA_LIB=-L$(CUDA_HOME)/lib64 -lcudart
 CUDA_INC=-I$(CUDA_HOME)/include $(R_INC) $(R_LIB) -I.
 #all #all-major
-CUDA_ARCH=-O3 -arch=compute_50 -G -lR --shared -Xcompiler -fPIC 
+CUDA_ARCH=-O3 -arch=sm_50 -G -lR --shared -Xcompiler -fPIC 
 CUDA_FLAGS=$(CUDA_LIB) $(CUDA_INC)
 
 # general compilation composed flags

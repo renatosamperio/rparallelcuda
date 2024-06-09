@@ -1,32 +1,3 @@
-# Sys.setenv(MKL_CBWR = "AVX2,STRICT")
-# Sys.setenv(MKL_CBWR = "COMPATIBLE")
-# Sys.setenv(MKL_NUM_THREADS = "4")
-# options(digits=20)
-
-if (FALSE) {
-    message(paste0("MKL_CBWR: ", Sys.getenv("MKL_CBWR")))
-}
-
-.rotate <-\(out_vector,
-            func, 
-            A = NULL,
-            B = NULL,
-            C = NULL) {
-
-    c(out_vector, func(A, B, C))
-}
-
-.stats <- \(input) {
-    list(
-        data = sort(input),
-        avg = mean(input),
-        stdev = stats::sd(input),
-        max = max(input),
-        min = min(input),
-        range = max(input) - min(input)
-    )
-}
-
 #' Run parallel benchmark 
 #' @param A `vector` array of numbers
 #' @param B `vector` array of numbers
@@ -34,6 +5,9 @@ if (FALSE) {
 #' @param times `numeric` how many times it shoud run
 #' @param size `numeric` size of vector if not provided
 #' @param debug `boolean` set to show messages
+#' @param with_gc `boolean` set to include garbage collection
+#' @param block1 `numeric` size of block 1
+#' @param block2 `numeric` size of block 2
 #' @export
 test_parallel_sum <- function(
     A = NULL,
@@ -41,7 +15,9 @@ test_parallel_sum <- function(
     C = NULL,
     times = 1, 
     size = 496, 
-    debug = FALSE) {
+    debug = FALSE,
+    with_gc = FALSE, 
+    block1 = 16, block2 = 16) {
 
     message(paste0("Creating input data of ", size, " x ", size))
     if (is.null(A)) {
@@ -56,21 +32,52 @@ test_parallel_sum <- function(
         C <- initMatrix(size, debug = debug)
     } 
 
-    callTbbGraph <- \() {r1 <- sumMatrixesTbbGraph(A, B, C)}
-    callTbbParalleFor <- \() {r1 <- sumMatrixesTbbGraph(A, B, C)}
-    callRcppParallel <- \() {r1 <- sumMatrixesRcpp(A, B, C)}
+    callTbbGraph <- \(cleaner = FALSE) {
+        r <- sumMatrixesTbbGraph(A, B, C); 
+        if(cleaner) {
+            r<-NULL
+            gc()
+        }}
+    callRcppParallel <- \(cleaner = FALSE) {
+        r <- sumMatrixesRcpp(A, B, C); 
+        if(cleaner) {
+            r<-NULL
+            gc()
+        }}
+    callTbbParalleFor <- \(cleaner = FALSE) {
+        r <- sumMatrixesTbbParallel(A, B, C);
+        if(cleaner) {
+            r<-NULL
+            gc()
+        }}
+    callTbbCuda <- \(cleaner = FALSE) {
+        r <- sumMatrixesTbbCuda(A, B, C); 
+        if(cleaner) {
+            r<-NULL
+            gc()
+        }}
+    callCuda <- \(cleaner = FALSE) {
+        r <- sumMatrixesCuda(A, B, C); 
+        if(cleaner) {
+            r<-NULL
+            gc()
+        }}
 
     message(paste0("Benchmarking methods..."))
     res_benchmark <- microbenchmark::microbenchmark(
-        callTbbGraph(), 
-        callTbbParalleFor(),
-        callRcppParallel(),
+        callTbbGraph(with_gc),
+        callRcppParallel(with_gc),
+        callTbbParalleFor(with_gc),
+        callTbbCuda(with_gc),
+        callCuda(with_gc),
         times = times)
 
     sum_bench <- summary(res_benchmark)
     sum_bench <- sum_bench[order(sum_bench$mean),]
 
-    sum_bench[c('expr', 'mean')]
+    # print(res_benchmark)
+
+    sum_bench[c('expr', 'mean', 'min', 'max')]
 
 }
 

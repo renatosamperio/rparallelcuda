@@ -6,7 +6,7 @@ using namespace RcppParallel;
 
 struct MatrixSum : public Worker {
     
-    // Input matrices
+    // Input matrixes
     const Rcpp::NumericMatrix A;
     const Rcpp::NumericMatrix B;
     const Rcpp::NumericMatrix C;

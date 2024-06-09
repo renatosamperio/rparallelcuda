@@ -11,15 +11,9 @@ Rcpp::NumericMatrix sum_matrixes_tbb_graph(
         A.nrow() != C.nrow() || 
         A.ncol() != B.ncol() || 
         A.ncol() != C.ncol()) {
-            Rcpp::Rcout << "All matrices must have the same dimensions" << std::endl;
+            Rcpp::Rcout << "All matrixes must have the same dimensions" << std::endl;
             return result;
     }
-
-
-    // std::vector<std::vector<float>> A_host = matrix_to_vectors(A);
-    // std::vector<std::vector<float>> B_host = matrix_to_vectors(B);
-    // std::vector<std::vector<float>> C_host = matrix_to_vectors(C);
-    // std::vector<float> v_res = Rcpp::as< std::vector<float> >(result); 
 
     size_t available_cores = oneapi::tbb::info::default_concurrency();
     int chunk_size = N / available_cores;

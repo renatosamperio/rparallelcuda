@@ -6,11 +6,11 @@
 #' @param debug `boolean` set to show messages
 #' @param block1 `numeric` size of block 1
 #' @param block2 `numeric` size of block 2
-sumMatrixesTbbCuda <- \(A = NULL,
+sumMatrixesCuda <- \(A = NULL,
                         B = NULL,
                         C = NULL,
                         size = 496, 
-                        debug = FALSE, 
+                        debug = FALSE,
                         block1 = 16, block2 = 16) {
 
     if (is.null(A)) {
@@ -25,6 +25,6 @@ sumMatrixesTbbCuda <- \(A = NULL,
         size <- nrow(A)
     }
 
-    if(debug) message(paste0("Running summation with TBB threads and CUDA"))
-    sum_matrixes_tbb_cuda(A, B, C, size, block1, block2)
+    if(debug) message(paste0("Running summation with TBB graph-based threads for ", size))
+    sum_matrixes_cuda(A, B, C, size, block1, block2)
 }

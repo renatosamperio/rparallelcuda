@@ -10,7 +10,7 @@
         } \
     } while (0)
 
-__global__ void matrix_sum_kernel(const float* A, const float* B, const float* C, float* result, int N) {
+__global__ void matrix_sum_kernel(const double* A, const double* B, const double* C, double* result, int N) {
     int idx = blockIdx.x * blockDim.x + threadIdx.x;
     int idy = blockIdx.y * blockDim.y + threadIdx.y;
 
@@ -23,13 +23,13 @@ __global__ void matrix_sum_kernel(const float* A, const float* B, const float* C
 
 extern "C"
 void matrix_sum_cuda(
-    const float* A, 
-    const float* B, 
-    const float* C, 
-    float* result, int N, int idx) {
+    const double* A, 
+    const double* B, 
+    const double* C, 
+    double* result, int N, int block1, int block2) {
 
-    float *d_A, *d_B, *d_C, *d_result;
-    size_t size = N * sizeof(float);
+    double *d_A, *d_B, *d_C, *d_result;
+    size_t size = N * N * sizeof(double);
 
     CUDA_CHECK(cudaMalloc(&d_A, size));
     CUDA_CHECK(cudaMalloc(&d_B, size));
@@ -40,18 +40,25 @@ void matrix_sum_cuda(
     CUDA_CHECK(cudaMemcpy(d_B, B, size, cudaMemcpyHostToDevice));
     CUDA_CHECK(cudaMemcpy(d_C, C, size, cudaMemcpyHostToDevice));
 
-    // dim3 threadsPerBlock(65536, 65536);
-    // dim3 threadsPerBlock(1024, 1024);
-    // dim3 threadsPerBlock(16, 16);
-    dim3 threadsPerBlock(16, 4);
+    dim3 threadsPerBlock(block1, block2);
     dim3 numBlocks((N + threadsPerBlock.x - 1) / threadsPerBlock.x, (N + threadsPerBlock.y - 1) / threadsPerBlock.y);
 
-    // std::cout << "    CUDA summing in: " << idx << std::endl;
-    matrix_sum_kernel<<<numBlocks, threadsPerBlock>>>(d_A, d_B, d_C, d_result, N);
+    // matrix_sum_kernel<<<numBlocks, threadsPerBlock>>>(d_A, d_B, d_C, d_result, N);
     CUDA_CHECK(cudaMemcpy(result, d_result, size, cudaMemcpyDeviceToHost));
 
     CUDA_CHECK(cudaFree(d_A));
     CUDA_CHECK(cudaFree(d_B));
     CUDA_CHECK(cudaFree(d_C));
     CUDA_CHECK(cudaFree(d_result));
+}
+
+
+__global__ void matrixSumKernel(double* A, double* B, double* C, double* D, int rows, int cols) {
+    int idx = blockIdx.x * blockDim.x + threadIdx.x;
+    int idy = blockIdx.y * blockDim.y + threadIdx.y;
+    
+    if (idx < cols && idy < rows) {
+        int index = idy * cols + idx;
+        D[index] = A[index] + B[index] + C[index];
+    }
 }

@@ -4,7 +4,15 @@
 \alias{sumMatrixesTbbCuda}
 \title{Executes a summation with TBB and CUDA}
 \usage{
-sumMatrixesTbbCuda(A = NULL, B = NULL, C = NULL, size = 496, debug = FALSE)
+sumMatrixesTbbCuda(
+  A = NULL,
+  B = NULL,
+  C = NULL,
+  size = 496,
+  debug = FALSE,
+  block1 = 16,
+  block2 = 16
+)
 }
 \arguments{
 \item{A}{\code{vector} array of numbers}
@@ -16,6 +24,10 @@ sumMatrixesTbbCuda(A = NULL, B = NULL, C = NULL, size = 496, debug = FALSE)
 \item{size}{\code{numeric} of array, default based on L2 Cache}
 
 \item{debug}{\code{boolean} set to show messages}
+
+\item{block1}{\code{numeric} size of block 1}
+
+\item{block2}{\code{numeric} size of block 2}
 }
 \description{
 Executes a summation with TBB and CUDA
