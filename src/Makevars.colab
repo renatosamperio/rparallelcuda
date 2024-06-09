@@ -1,39 +1,62 @@
-# Define libraries for handling TBB
-TBB=/usr/include/oneapi/
-TBB_INC=$(TBB)/ 
-TBB_LIB=/usr/lib/x86_64-linux-gnu/
-TBBLIBS=-ltbb -pthread
+# Compilers
+NVCC = /usr/local/cuda/bin/nvcc
 
-# Define paths for R and libraries
-R_PKGS = /usr/local/lib/R/site-library/
-R_INC = /usr/share/R/include
-R_LIB = /usr/lib/R/lib/
-RCPP_INC = $(R_PKGS)/Rcpp
-RCPP_PARA = $(R_PKGS)/RcppParallel
+# Define libraries for handling TBB
+ONEAPI_INC=-I$(/usr/include/oneapi)/ 
+ONEAPI_LIB=-L/usr/lib/x86_64-linux-gnu -ltbb -pthread
+ONEAPI_FLAGS=$(ONEAPI_LIB) $(ONEAPI_INC)
+
+# R related paths
+R_HOME = /usr/lib/R
+R_LIB = -L$(R_HOME)/lib
+R_INC = -I/usr/share/R/include
+R_FLAGS = $(R_INC) $(R_LIB)
+
+# Paths for Rcpp
+R_PKGS = /usr/local/lib/R/site-library
+RCPP_HOME = $(R_PKGS)/Rcpp
+RCPP_INC = -I$(RCPP_HOME)/include
+RCPP_PARA = -L$(RCPP_HOME)/libs
+RCPP_FLAGS=$(RCPP_PARA) $(RCPP_INC)
+
+# Paths for RcppParallel
+RCPP_PAR_HOME = $(R_PKGS)/RcppParallel
+RCPP_PAR_LIB = -L$(RCPP_PAR_HOME)/libs
+RCPP_PAR_INC = -I$(RCPP_PAR_HOME)/include
+RCPP_PAR_FLAGS=$(RCPP_PAR_LIB) $(RCPP_PAR_INC)
+
+# used compile cuda library
+CUDA_HOME=/usr/local/cuda
+CUDA_LIB=-L$(CUDA_HOME)/lib64 -lcudart
+CUDA_INC=-I$(CUDA_HOME)/include $(R_INC) $(R_LIB) -I.
+CUDA_ARCH=-O3 -arch=sm_70 -G -lR --shared -Xcompiler -fPIC 
+CUDA_FLAGS=$(CUDA_LIB) $(CUDA_INC)
 
 ## Additional compilation flags
 CPP_FLAGS = -fopenmp -fpic -g -O2 -flto -Wall -pedantic -fdiagnostics-color=always
 LIB_FLAGS = -L$(RCPP_PARA)/lib -L$(RCPP_PARA)/libs -L$(TBB_LIB)
-INCLUDE_FLAGS = -I$(R_INC) -I$(RCPP_PARA)/include -I$(RCPP_INC)/include -I$(TBB_INC) 
-CXX_23 = g++ -std=gnu++17
 
-#  Part '-Wl,-R' tells binary to look for the library 
-PKG_SYSTEM_LIBS = $(TBBLIBS) -L$(TBB_LIB) -I$(TBB_INC) -Wl,-R$(TBB_LIB) -I$(R_LIB) 
-PKG_CXXFLAGS = $(SHLIB_OPENMP_CXXFLAGS) 
-PKG_LIBS = -L$(TBB_LIB) $(SHLIB_OPENMP_CXXFLAGS) $(FLIBS) $(PKG_SYSTEM_LIBS)
-#  $(LAPACK_LIBS) $(BLAS_LIBS) 
+# general compilation composed flags
+CXX_FLAGS=$(CUDA_FLAGS) $(ONEAPI_FLAGS)
+LINKING_FLAGS=-Wl,-R$(ONEAPI_HOME)/lib
 
 ## Library source and object files
 cpp_sources = $(wildcard *.cpp)
-cpp_sharedlibs := $(patsubst %.cpp, %.o, $(cpp_sources))
+cpp_objs := $(patsubst %.cpp, %.o, $(cpp_sources))
+cu_sources = $(wildcard *.cu)
+cu_objs := $(patsubst %.cu, %.o, $(cu_sources))
 
-## PHONY targets
-.PHONY: all build_lib
+PKG_LIBS = $(R_FLAGS) $(ONEAPI_FLAGS) $(CUDA_FLAGS) $(LINKING_FLAGS) $(RCPP_FLAGS) $(RCPP_PAR_FLAGS)
+OBJECTS = $(cu_objs) $(cpp_objs)
 
-## Overwrite R targets prepared for SHLIB (SCRddmm.so) with "build_lib"
-all: build_lib
+all: clean $(SHLIB)
+$(SHLIB): $(OBJECTS)
 
-## Compile personalised targets
-OBJECTS = $(cpp_sharedlibs)
+clean:
+	rm -f *.o $(SHLIB)
+
 %.o: %.cpp $(cpp_sources)
-	$(CXX_23) $< -c $(INCLUDE_FLAGS) $(LIB_FLAGS) $(CPP_FLAGS) 
+	$(CXX) $< -c -fPIC $(R_INC) $(RCPP_INC) $(RCPP_PAR_INC) $(ONEAPI_FLAGS) -I.
+
+%.o: %.cu $(cu_sources)
+	$(NVCC) $(CUDA_FLAGS) $(CUDA_ARCH) $< -c -I. 
