@@ -1,10 +1,10 @@
-CXX_20 = g++ -std=gnu++17
+CXX_STD = CXX20
 NVCC = /usr/local/cuda/bin/nvcc
 
 ## R relted paths
 R_HOME = /usr/local/lib64/R
 R_INC = -I$(R_HOME)/include
-R_LIB = -L$(R_HOME)/libs
+R_LIB = -L$(R_HOME)/lib
 R_FLAGS = $(R_INC) $(R_LIB)
 R_PKGS = /home/rmpuser/R/4.3.3/almalinux9.4
 
@@ -14,8 +14,8 @@ RCPP_PARA = -L$(RCPP_HOME)/libs
 RCPP_FLAGS=$(RCPP_PARA) $(RCPP_INC)
 
 RCPP_PAR_HOME = $(R_HOME)/library/RcppParallel
-RCPP_PAR_LIB = -L$(RCPP_PAR_HOME)/lib
 RCPP_PAR_INC = -I$(RCPP_PAR_HOME)/include
+RCPP_PAR_LIB = -L$(RCPP_PAR_HOME)/libs
 RCPP_PAR_FLAGS=$(RCPP_PAR_LIB) $(RCPP_PAR_INC)
 
 # used compile oneAPI library
@@ -52,7 +52,7 @@ clean:
 	rm -f *.o $(SHLIB)
 
 %.o: %.cpp $(cpp_sources)
-	$(CXX) $< -c -fPIC $(R_INC) $(RCPP_INC) $(RCPP_PAR_INC) $(ONEAPI_FLAGS) -I.
+	$(CXX) $(INCLUDE_FLAGS) $(LIB_FLAGS) $(CPP_FLAGS) -c $< -o $@ $(PKG_LIBS)
 
 %.o: %.cu $(cu_sources)
-	$(NVCC) $(CUDA_FLAGS) $(CUDA_ARCH) $(RCPP_INC) $< -c -I. 
+	$(NVCC) $(CUDA_FLAGS) $(CUDA_ARCH) $(RCPP_INC) -I. -c $< -o $@

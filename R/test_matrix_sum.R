@@ -76,6 +76,8 @@ test_parallel_sum <- function(
     sum_bench <- sum_bench[order(sum_bench$mean),]
 
     # print(res_benchmark)
+    message(paste0("Saving benchmark into file"))
+    saveRDS(res_benchmark, file = "res_benchmark.rds")
 
     sum_bench[c('expr', 'mean', 'min', 'max')]
 
