@@ -1,5 +1,5 @@
 # Configuration for RStudio or R console sessions
-CXX_STD = CXX17
+CXX_STD = CXX20
 NVCC = /usr/local/cuda/bin/nvcc
 
 ## R relted paths
@@ -12,8 +12,8 @@ R_FLAGS = $(R_INC) $(R_LIB)
 R_PKGS = /usr/local/lib64/R/library
 RCPP_HOME = $(R_PKGS)/Rcpp
 RCPP_INC = -I$(RCPP_HOME)/include
-RCPP_PARA = -L$(RCPP_HOME)/libs
-RCPP_FLAGS=$(RCPP_PARA) $(RCPP_INC)
+RCPP_LIB = -L$(RCPP_HOME)/libs
+RCPP_FLAGS=$(RCPP_LIB) $(RCPP_INC)
 
 # Paths for RcppParallel
 RCPP_PAR_HOME = $(R_PKGS)/RcppParallel
@@ -37,7 +37,7 @@ CUDA_FLAGS=$(CUDA_LIB) $(CUDA_INC)
 
 # general compilation composed flags
 CXX_FLAGS=$(CUDA_FLAGS) $(ONEAPI_FLAGS)
-LINKING_FLAGS=-L$(RCPP_PARA)/lib -L$(RCPP_PARA)/libs -L$(TBB_LIB) -Wl,-R$(ONEAPI_HOME)/lib
+LINKING_FLAGS=$(RCPP_LIB) $(ONEAPI_LIB) -Wl,-R$(ONEAPI_HOME)/lib
 
 ## Library source and object files
 cpp_sources = $(wildcard *.cpp)
@@ -55,7 +55,7 @@ clean:
 	rm -f *.o $(SHLIB)
 
 %.o: %.cpp $(cpp_sources)
-	$(CXX) $< -c -fPIC $(R_INC) $(RCPP_INC) $(RCPP_PAR_INC) $(ONEAPI_FLAGS) -I.
+	$(CXX) $< -c -fPIC $(R_INC) $(RCPP_INC) $(RCPP_PAR_INC) $(ONEAPI_INC) -I.
 
 %.o: %.cu $(cu_sources)
 	$(NVCC) $(CUDA_FLAGS) $(CUDA_ARCH) $(RCPP_INC) $< -c -I. 

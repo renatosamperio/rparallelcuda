@@ -8,7 +8,6 @@ License: GPL (>=3)
 Imports: 
     microbenchmark,
     Rcpp,
-    RcppParallel,
     stats
 LinkingTo: 
     Rcpp,

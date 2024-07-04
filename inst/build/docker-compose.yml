@@ -1,0 +1,18 @@
+
+services:
+  rcuda:
+    container_name: rcuda
+    image: renatosamperio/rcuda
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+      platforms:
+      - "linux/amd64"
+      args:
+        R_VERSION: 4.3.3
+        OS_VERSION: 9.4
+    privileged: true
+    command: /bin/bash -c "sleep infinity"
+    working_dir: /home/rmpuser/
+    volumes:
+      - "${LOCAL_ENV}:/home/rmpuser"
