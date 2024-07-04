@@ -1,15 +1,11 @@
-# Compilers
+# Configuration for Google Colaboratory sheets
+CXX_STD = CXX17
 NVCC = /usr/local/cuda/bin/nvcc
-
-# Define libraries for handling TBB
-ONEAPI_INC=-I$(/usr/include/oneapi)/ 
-ONEAPI_LIB=-L/usr/lib/x86_64-linux-gnu -ltbb -pthread
-ONEAPI_FLAGS=$(ONEAPI_LIB) $(ONEAPI_INC)
 
 # R related paths
 R_HOME = /usr/lib/R
-R_LIB = -L$(R_HOME)/lib
 R_INC = -I/usr/share/R/include
+R_LIB = -L$(R_HOME)/libs
 R_FLAGS = $(R_INC) $(R_LIB)
 
 # Paths for Rcpp
@@ -25,6 +21,11 @@ RCPP_PAR_LIB = -L$(RCPP_PAR_HOME)/libs
 RCPP_PAR_INC = -I$(RCPP_PAR_HOME)/include
 RCPP_PAR_FLAGS=$(RCPP_PAR_LIB) $(RCPP_PAR_INC)
 
+# Define libraries for handling TBB
+ONEAPI_INC=-I$(/usr/include/oneapi)/ 
+ONEAPI_LIB=-L/usr/lib/x86_64-linux-gnu -ltbb -pthread
+ONEAPI_FLAGS=$(ONEAPI_LIB) $(ONEAPI_INC)
+
 # used compile cuda library
 CUDA_HOME=/usr/local/cuda
 CUDA_LIB=-L$(CUDA_HOME)/lib64 -lcudart
@@ -34,7 +35,7 @@ CUDA_FLAGS=$(CUDA_LIB) $(CUDA_INC)
 
 ## Additional compilation flags
 CPP_FLAGS = -fopenmp -fpic -g -O2 -flto -Wall -pedantic -fdiagnostics-color=always
-LIB_FLAGS = -L$(RCPP_PARA)/lib -L$(RCPP_PARA)/libs -L$(TBB_LIB)
+LIB_FLAGS = -L$(RCPP_PARA)/lib -L$(RCPP_PARA)/libs -L$(TBB_LIB) -Wl,-R$(ONEAPI_HOME)/lib
 
 # general compilation composed flags
 CXX_FLAGS=$(CUDA_FLAGS) $(ONEAPI_FLAGS)

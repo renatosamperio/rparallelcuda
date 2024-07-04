@@ -1,3 +1,4 @@
+# Configuration for RStudio or R console sessions
 CXX_STD = CXX17
 NVCC = /usr/local/cuda/bin/nvcc
 
@@ -6,19 +7,21 @@ R_HOME = /usr/local/lib64/R
 R_INC = -I$(R_HOME)/include
 R_LIB = -L$(R_HOME)/libs
 R_FLAGS = $(R_INC) $(R_LIB)
-R_PKGS = /home/rmpuser/R/4.3.3/almalinux9.4
 
-RCPP_HOME = $(R_HOME)/library/Rcpp
+# Paths for Rcpp
+R_PKGS = /usr/local/lib64/R/library
+RCPP_HOME = $(R_PKGS)/Rcpp
 RCPP_INC = -I$(RCPP_HOME)/include
 RCPP_PARA = -L$(RCPP_HOME)/libs
 RCPP_FLAGS=$(RCPP_PARA) $(RCPP_INC)
 
-RCPP_PAR_HOME = $(R_HOME)/library/RcppParallel
-RCPP_PAR_LIB = -L$(RCPP_PAR_HOME)/lib
+# Paths for RcppParallel
+RCPP_PAR_HOME = $(R_PKGS)/RcppParallel
+RCPP_PAR_LIB = -L$(RCPP_PAR_HOME)/libs
 RCPP_PAR_INC = -I$(RCPP_PAR_HOME)/include
 RCPP_PAR_FLAGS=$(RCPP_PAR_LIB) $(RCPP_PAR_INC)
 
-# used compile oneAPI library
+# Define libraries for handling TBB
 ONEAPI_HOME=/opt/intel/oneapi/tbb/latest
 ONEAPI_LIB=-L$(ONEAPI_HOME)/lib -ltbb -pthread 
 ONEAPI_INC=-I$(ONEAPI_HOME)/include
@@ -34,7 +37,7 @@ CUDA_FLAGS=$(CUDA_LIB) $(CUDA_INC)
 
 # general compilation composed flags
 CXX_FLAGS=$(CUDA_FLAGS) $(ONEAPI_FLAGS)
-LINKING_FLAGS=-Wl,-R$(ONEAPI_HOME)/lib
+LINKING_FLAGS=-L$(RCPP_PARA)/lib -L$(RCPP_PARA)/libs -L$(TBB_LIB) -Wl,-R$(ONEAPI_HOME)/lib
 
 ## Library source and object files
 cpp_sources = $(wildcard *.cpp)
