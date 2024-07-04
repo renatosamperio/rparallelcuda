@@ -44,7 +44,7 @@ void matrix_sum_cuda(
     dim3 threadsPerBlock(block1, block2);
     dim3 numBlocks((N + threadsPerBlock.x - 1) / threadsPerBlock.x, (N + threadsPerBlock.y - 1) / threadsPerBlock.y);
 
-    // matrix_sum_kernel<<<numBlocks, threadsPerBlock>>>(d_A, d_B, d_C, d_result, N);
+    matrix_sum_kernel<<<numBlocks, threadsPerBlock>>>(d_A, d_B, d_C, d_result, N);
     CUDA_CHECK(cudaMemcpy(result, d_result, size, cudaMemcpyDeviceToHost));
 
     CUDA_CHECK(cudaFree(d_A));
