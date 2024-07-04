@@ -200,18 +200,29 @@ RUN cd /tmp \
   && cd / \
   && rm -rf /tmp/R-${R_VERSION}* 
 
-RUN wget https://developer.download.nvidia.com/compute/cuda/repos/rhel8/x86_64/cuda-rhel8.repo -O /etc/yum.repos.d/cuda-rhel8.repo \
-&& dnf install -y \
-    cuda-drivers \
-    cuda \
-&& dnf module install -y nvidia-driver
-
 COPY install_arrow_4.3.3.r install_arrow.r
 RUN Rscript install_arrow.r
 
 # configure and install R
 COPY install_4.3.3.r install.r
 RUN Rscript install.r
+
+RUN wget https://developer.download.nvidia.com/compute/cuda/repos/rhel9/x86_64/cuda-rhel9.repo -O /etc/yum.repos.d/cuda-rhel9.repo \
+  && dnf update -y \ 
+  && dnf makecache \
+  && dnf install -y \
+        cuda \
+        cuda-drivers \
+        freeglut-devel \
+        freeimage-devel \
+        glfw-devel \
+        libX11-devel \
+        libXi-devel \
+        libXmu-devel \
+        make \
+        mesa-libGLU-devel \
+  && dnf uppgrade -y \
+  && dnf module install -y nvidia-driver
 
 CMD ["/bin/bash"]
 WORKDIR /home/rmpuser

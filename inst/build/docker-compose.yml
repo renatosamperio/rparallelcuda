@@ -13,6 +13,7 @@ services:
         OS_VERSION: 9.4
     privileged: true
     command: /bin/bash -c "sleep infinity"
+    runtime: nvidia
     working_dir: /home/rmpuser/
     volumes:
       - "${LOCAL_ENV}:/home/rmpuser"
