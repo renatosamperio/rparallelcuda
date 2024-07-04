@@ -213,15 +213,7 @@ RUN wget https://developer.download.nvidia.com/compute/cuda/repos/rhel9/x86_64/c
   && dnf install -y \
         cuda \
         cuda-drivers \
-        freeglut-devel \
-        freeimage-devel \
-        glfw-devel \
-        libX11-devel \
-        libXi-devel \
-        libXmu-devel \
-        make \
-        mesa-libGLU-devel \
-  && dnf uppgrade -y \
+  && dnf upgrade -y \
   && dnf module install -y nvidia-driver
 
 CMD ["/bin/bash"]

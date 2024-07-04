@@ -65,11 +65,11 @@ test_parallel_sum <- function(
 
     message(paste0("Benchmarking methods..."))
     res_benchmark <- microbenchmark::microbenchmark(
-        callTbbGraph(with_gc),
-        callRcppParallel(with_gc),
-        callTbbParalleFor(with_gc),
-        callTbbCuda(with_gc),
-        callCuda(with_gc),
+        r<-callTbbGraph(with_gc),
+        r<-callRcppParallel(with_gc),
+        r<-callTbbParalleFor(with_gc),
+        #r<-callTbbCuda(with_gc),
+        r<-callCuda(with_gc),
         times = times)
 
     sum_bench <- summary(res_benchmark)

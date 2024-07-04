@@ -25,6 +25,6 @@ sumMatrixesCuda <- \(A = NULL,
         size <- nrow(A)
     }
 
-    if(debug) message(paste0("Running summation with TBB graph-based threads for ", size))
+    if(debug) message(paste0("Running summation with CUDA kernel", size))
     sum_matrixes_cuda(A, B, C, size, block1, block2)
 }
