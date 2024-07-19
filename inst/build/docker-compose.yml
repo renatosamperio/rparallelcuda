@@ -1,19 +1,20 @@
 
 services:
-  rcuda:
-    container_name: rcuda
-    image: renatosamperio/rcuda
+  r-one-cuda:
+    container_name: r-one-cuda
+    image: renatosamperio/r-one-cuda
     build:
       context: ./
       dockerfile: ./Dockerfile
       platforms:
       - "linux/amd64"
       args:
-        R_VERSION: 4.3.3
+        R_VERSION: 4.4.1
         OS_VERSION: 9.4
     runtime: nvidia
+    user: 1000:1000
     privileged: true
     command: /bin/bash -c "sleep infinity"
-    working_dir: /home/rmpuser/
+    working_dir: /home/rmpuser/rparallelcuda
     volumes:
       - "${LOCAL_ENV}:/home/rmpuser"

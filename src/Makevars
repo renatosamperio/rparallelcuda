@@ -5,7 +5,7 @@ NVCC = /usr/local/cuda/bin/nvcc
 ## R relted paths
 R_HOME = /usr/local/lib64/R
 R_INC = -I$(R_HOME)/include
-R_LIB = -L$(R_HOME)/libs
+R_LIB = -L$(R_HOME)/lib
 R_FLAGS = $(R_INC) $(R_LIB)
 
 # Paths for Rcpp

@@ -77,11 +77,12 @@ test_parallel_sum <- function(
 
     # print(res_benchmark)
     message(paste0("Saving benchmark into file"))
-    print(res_benchmark)
+    # print(res_benchmark)
 
-    sum_bench[c('expr', 'mean', 'min', 'max')]
+    sum_bench <- sum_bench[c('expr', 'mean', 'min', 'max')]
     print(sum_bench)
 
-    res_benchmark
+    # res_benchmark
+    sum_bench
 }
 

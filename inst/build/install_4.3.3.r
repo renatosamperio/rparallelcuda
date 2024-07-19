@@ -14,8 +14,11 @@ install_packages <- function(pkgs, ...) {
 # select CRAN from switzerland
 chooseCRANmirror(ind = 60)
 install.packages(
-  c('assertthat',
+  c("assertthat",
+    "av", # used for gganimate
     "dplyr",
+    "gganimate",
+    "gifski", # used for gganimate
     "knitr",
     'microbenchmark',
     "qs",
@@ -24,9 +27,11 @@ install.packages(
     'RcppArmadillo',
     'roxygen2',
     "remotes",
+    "sf", # used for gganimate
     "stringr",
     'tictoc',
     'testthat',
+    "transformr", # used for gganimate
     "XML",
     "xml2",
     "yaml",
