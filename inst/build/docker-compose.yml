@@ -1,4 +1,3 @@
-
 services:
   r-one-cuda:
     container_name: r-one-cuda
